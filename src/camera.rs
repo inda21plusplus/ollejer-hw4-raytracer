@@ -18,7 +18,7 @@ impl Camera {
         let aspect_ratio = 16.0 / 9.0;
         let viewport_height = 2.0;        
         let viewport_width = viewport_height * aspect_ratio;
-        let focal_length = 1.0 as f32;
+        let focal_length = 1.0_f32;
         
         let origin = Vec3::new(0.0, 0.0, 0.0);
         let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
@@ -41,7 +41,7 @@ impl Camera {
 
     pub fn get_ray(&self, u: f32, v: f32) -> Ray {
         let direction = self.bottom_left_corner + u*self.horizontal + v*self.vertical - self.origin;
-        return Ray::new(self.origin, direction)
+        Ray::new(self.origin, direction)
     }
 }
 

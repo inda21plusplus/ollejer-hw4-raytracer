@@ -1,5 +1,4 @@
 
-#![allow(dead_code)]
 mod ray;
 mod sphere;
 mod hittable;
@@ -12,7 +11,7 @@ use macaw::Vec3;
 use hittable::{Hittable, HitRecord};
 use hittable_list::HittableList;
 use sphere::Sphere;
-use util::{write_pixel_color, random_f32, random_range};
+use util::{write_pixel_color, random_f32};
 use camera::Camera;
 
 
