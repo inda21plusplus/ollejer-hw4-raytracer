@@ -1,26 +1,28 @@
 
 #![allow(dead_code)]
 mod ray;
+mod sphere;
+mod hittable;
+mod hittable_list;
 
 use ray::Ray;
 use macaw::Vec3;
+use hittable::{Hittable, HitRecord};
+use hittable_list::HittableList;
+use sphere::Sphere;
 
 
-fn ray_color(ray: &Ray) -> Vec3 {
-    let sphere_center = Vec3::new(0.0, 0.0,-1.0);
-    let t = hit_sphere(sphere_center, 0.5, ray);
-    if t > 0.0 {
-        let n = ray.at(t) - sphere_center;
-        let n = n.normalize();
-
-        let color = Vec3::new(n.x + 1., n.y + 1., n.z + 1.);
-        return 0.5*color
+fn ray_color(ray: &Ray, world: &HittableList) -> Vec3 {
+    let mut rec = HitRecord::default();
+    if world.hit(ray, 0.0, f32::MAX, &mut rec) {
+        return 0.5 * (rec.normal + Vec3::new(0.5, 1.0, 1.0)); // Change x value to 1.0
     }
 
-    let unit_direction = ray.clone().direction().normalize();
+    let unit_direction = ray.direction().normalize();
     let t = 0.5 * (unit_direction.y + 1.0);
     let color1 = Vec3::new(1.0, 1.0, 1.0);
     let color2 = Vec3::new(0.5, 0.7, 1.0);
+
     (1.0 - t) * color1 + t * color2
 }
 
@@ -60,6 +62,27 @@ fn main() {
 
     const MAX_VALUE: u8 = 255; 
 
+    // World
+    let mut world = HittableList::new();
+    world.list.push(
+        Box::new(
+            Sphere::new(
+            Vec3::new(0.0, 0.0, -1.0),
+            0.5
+            )
+        )
+    );
+    world.list.push(
+        Box::new(
+            Sphere::new(
+                Vec3::new(0.0, -100.5, -1.0),
+                100.0,
+            )
+        )
+    );
+
+
+
     // Camera 
     let viewport_height: f32 = 2.0;
     let viewport_width: f32 = ASPECT_RATIO * viewport_height;
@@ -81,7 +104,7 @@ fn main() {
             let v = j as f32 / (IMAGE_HEIGHT - 1) as f32;
 
             let r = Ray::new(origin, bottom_left_corner + u*horizontal + v*vertical - origin);
-            let pixel_color = ray_color(&r);
+            let pixel_color = ray_color(&r, &world);
             write_color(pixel_color);
         }
     }
