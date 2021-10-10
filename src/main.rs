@@ -20,7 +20,7 @@ use camera::Camera;
 fn ray_color(ray: &Ray, world: &HittableList) -> Vec3 {
     let mut hit_rec = HitRecord::default();
     if world.hit(ray, 0.0, f32::MAX, &mut hit_rec) {
-        return 0.5 * (hit_rec.normal + Vec3::new(0.5, 1.0, 1.0)); // Change x value to 1.0
+        return 0.4 * (hit_rec.normal + Vec3::new(0.5, 1.0, 1.0)); // Change x value to 1.0
     }
 
     let unit_direction = ray.direction().normalize();
@@ -56,12 +56,12 @@ fn main() {
     // Image 
     
     const ASPECT_RATIO: f32 = 16.0 / 9.0;
-    const IMAGE_WIDTH: i32 = 400;
+    const IMAGE_WIDTH: i32 = 200;
     const IMAGE_HEIGHT: i32 = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as i32;
 
     const MAX_VALUE: u8 = 255; 
 
-    const SAMPLES_PER_PIXEL: u32 = 2;
+    const SAMPLES_PER_PIXEL: u32 = 50;
 
     // World
     // small sphere  
@@ -97,8 +97,8 @@ fn main() {
         for pixel_column in 0..IMAGE_WIDTH {
             let mut pixel_color = Vec3::new(0.0, 0.0, 0.0);
             for _s in 0..SAMPLES_PER_PIXEL {
-                let u = (pixel_column as f32 * random_f32()) / (IMAGE_WIDTH - 1) as f32;
-                let v = (pixel_row as f32 * random_f32()) / (IMAGE_HEIGHT - 1) as f32;
+                let u = (pixel_column as f32 + random_f32()) / (IMAGE_WIDTH) as f32;
+                let v = (pixel_row as f32 + random_f32()) / (IMAGE_HEIGHT) as f32;
                 let ray = camera.get_ray(u, v);
                 pixel_color += ray_color(&ray, &world);
 

@@ -30,7 +30,7 @@ impl Camera {
             aspect_ratio,
             viewport_height,
             viewport_width,
-            focal_length: 1.0,
+            focal_length,
             
             origin,
             horizontal,

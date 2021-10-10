@@ -14,7 +14,6 @@ pub fn write_pixel_color(pixel_color: Vec3, samples_per_pixel: u32) {
     let scale = 1.0 / (samples_per_pixel as f32);
     let (r, g, b) = (pixel_color.x*scale, pixel_color.y*scale, pixel_color.z*scale);
 
- 
     println!("{} {} {}", 
         ((256 as f32 * clamp(r, 0.0, 0.999)) as u16),
         ((256 as f32 * clamp(g, 0.0, 0.999)) as u16),
