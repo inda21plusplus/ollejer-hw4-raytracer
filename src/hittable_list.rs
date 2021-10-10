@@ -16,21 +16,20 @@ impl HittableList {
 impl Hittable for HittableList {
     
 
-    fn hit(&self, ray: &Ray, t_min: f32, t_max: f32, mut rec: &mut  HitRecord ) -> bool {
-        let mut temp_rec = HitRecord::default();
+    fn hit(&self, ray: &Ray, t_min: f32, t_max: f32, mut hit_rec: &mut  HitRecord ) -> bool {
+        let mut temp_hit_rec = HitRecord::default();
         let mut hit_anything = false;
         let mut closest_so_far = t_max;
 
-
         for object in &self.list {
-            if object.hit(ray, t_min, closest_so_far, &mut temp_rec) {
+            if object.hit(ray, t_min, closest_so_far, &mut temp_hit_rec) {
                 hit_anything = true;
-                closest_so_far = temp_rec.t;
+                closest_so_far = temp_hit_rec.t;
                 
-                rec.point = temp_rec.point;
-                rec.t = temp_rec.t;
-                rec.normal = temp_rec.normal;
-                rec.front_face = temp_rec.front_face;
+                hit_rec.point = temp_hit_rec.point;
+                hit_rec.t = temp_hit_rec.t;
+                hit_rec.normal = temp_hit_rec.normal;
+                hit_rec.front_face = temp_hit_rec.front_face;
 
             }
         }
