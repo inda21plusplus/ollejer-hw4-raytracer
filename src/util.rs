@@ -38,3 +38,25 @@ pub fn random_range(min: f32, max: f32) -> f32 {
     let mut rng = rand::thread_rng();
     rng.gen_range(min..max)
 }
+
+pub fn random_vec() -> Vec3 {
+    Vec3::new(random_f32(), random_f32(), random_f32())
+}
+
+pub fn random_vec_range(min: f32, max: f32) -> Vec3 {
+    Vec3::new(
+        random_range(min, max),
+        random_range(min, max),
+        random_range(min, max),
+    )
+}
+
+pub fn random_vec_in_unit_sphere() -> Vec3 {
+    loop {
+        let p = random_vec_range(-1.0, 1.0);
+        if p.length_squared() >= 1.0 {
+            continue;
+        }
+        return p;
+    }
+}
