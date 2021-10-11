@@ -1,4 +1,6 @@
 # ollejer-hw4-rayracer
-A rusty ray tracer (The adjective describes both language and perforamnce)
+A rusty ray tracer (The adjective describes both language current perforamnce)
 
-This Raytracer was created with help from https://raytracing.github.io/books/RayTracingInOneWeekend.html
+Resouces:
+ 
+ - https://raytracing.github.io/books/RayTracingInOneWeekend.html
