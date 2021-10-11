@@ -28,22 +28,6 @@ fn ray_color(ray: &Ray, world: &HittableList) -> Vec3 {
     (1.0 - transition_variable) * color1 + transition_variable * color2
 }
 
-fn hit_sphere(center: Vec3, radius: f32, ray: &Ray) -> f32 {
-    let distbetween_origin_center = ray.origin() - center;
-    let ray_dir = ray.direction();
-
-    let a = ray_dir.length_squared();
-    let half_b = distbetween_origin_center.dot(ray_dir);
-    let c = distbetween_origin_center.length_squared() - radius * radius;
-    let discriminant = half_b * half_b - a * c;
-
-    if discriminant < 0.0 {
-        -1.0
-    } else {
-        (-half_b - discriminant.sqrt()) / a
-    }
-}
-
 fn main() {
     // Image
 
