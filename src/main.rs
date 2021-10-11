@@ -11,12 +11,21 @@ use hittable_list::HittableList;
 use macaw::Vec3;
 use ray::Ray;
 use sphere::Sphere;
-use util::{random_f32, write_pixel_color};
+use util::{random_f32, random_vec_in_unit_sphere, write_pixel_color};
 
-fn ray_color(ray: &Ray, world: &HittableList) -> Vec3 {
+fn ray_color(ray: &Ray, world: &HittableList, depth: u8) -> Vec3 {
     let mut hit_rec = HitRecord::default();
-    if world.hit(ray, 0.0, f32::MAX, &mut hit_rec) {
-        return 0.4 * (hit_rec.normal + Vec3::new(0.5, 1.0, 1.0)); // Change x value to 1.0
+    if depth <= 0 {
+        return Vec3::new(0.0, 0.0, 0.0);
+    }
+    if world.hit(ray, 0.001, f32::MAX, &mut hit_rec) {
+        let target = hit_rec.point + hit_rec.normal + random_vec_in_unit_sphere();
+        return 0.5
+            * ray_color(
+                &Ray::new(hit_rec.point, target - hit_rec.point),
+                world,
+                depth - 1,
+            );
     }
 
     let unit_direction = ray.direction().normalize();
@@ -37,7 +46,9 @@ fn main() {
 
     const MAX_VALUE: u8 = 255;
 
-    const SAMPLES_PER_PIXEL: u32 = 50;
+    const SAMPLES_PER_PIXEL: u32 = 100;
+
+    const MAX_DEPTH: u8 = 50;
 
     // World
     // small sphere
@@ -64,7 +75,7 @@ fn main() {
                 let u = (pixel_column as f32 + random_f32()) / (IMAGE_WIDTH) as f32;
                 let v = (pixel_row as f32 + random_f32()) / (IMAGE_HEIGHT) as f32;
                 let ray = camera.get_ray(u, v);
-                pixel_color += ray_color(&ray, &world);
+                pixel_color += ray_color(&ray, &world, MAX_DEPTH);
             }
             write_pixel_color(pixel_color, SAMPLES_PER_PIXEL);
         }

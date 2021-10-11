@@ -16,9 +16,9 @@ pub fn clamp(x: f32, min: f32, max: f32) -> f32 {
 pub fn write_pixel_color(pixel_color: Vec3, samples_per_pixel: u32) {
     let scale = 1.0 / (samples_per_pixel as f32);
     let (r, g, b) = (
-        pixel_color.x * scale,
-        pixel_color.y * scale,
-        pixel_color.z * scale,
+        (pixel_color.x * scale).sqrt(),
+        (pixel_color.y * scale).sqrt(),
+        (pixel_color.z * scale).sqrt(),
     );
 
     println!(
@@ -52,11 +52,11 @@ pub fn random_vec_range(min: f32, max: f32) -> Vec3 {
 }
 
 pub fn random_vec_in_unit_sphere() -> Vec3 {
+    let mut rng = rand::thread_rng();
     loop {
-        let p = random_vec_range(-1.0, 1.0);
-        if p.length_squared() >= 1.0 {
-            continue;
+        let p = 2.0 * Vec3::new(rng.gen::<f32>(), rng.gen::<f32>(), rng.gen::<f32>());
+        if p.length_squared() < 1.0 {
+            return p;
         }
-        return p;
     }
 }
