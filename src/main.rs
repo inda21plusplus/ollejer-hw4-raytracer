@@ -52,18 +52,18 @@ fn main() {
     // Image
 
     const ASPECT_RATIO: f32 = 16.0 / 9.0;
-    const IMAGE_WIDTH: i32 = 100;
+    const IMAGE_WIDTH: i32 = 400;
     const IMAGE_HEIGHT: i32 = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as i32;
 
     const MAX_VALUE: u8 = 255;
 
-    const SAMPLES_PER_PIXEL: u32 = 50;
+    const SAMPLES_PER_PIXEL: u32 = 100;
 
-    const MAX_DEPTH: u8 = 20;
+    const MAX_DEPTH: u8 = 50;
 
     // World
     let material_ground = Material::Matte {
-        albedo: Vec3::new(0.8, 0.8, 0.0),
+        albedo: Vec3::new(0.0, 0.4, 0.0),
     };
     let material_center = Material::Matte {
         albedo: Vec3::new(0.7, 0.3, 0.3),
@@ -71,9 +71,11 @@ fn main() {
 
     let material_left = Material::Metal {
         albedo: Vec3::new(0.8, 0.8, 0.8),
+        fuzz: 0.3,
     };
     let material_right = Material::Metal {
         albedo: Vec3::new(0.8, 0.6, 0.2),
+        fuzz: 1.0,
     };
 
     let mut world = HittableList::new();
