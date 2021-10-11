@@ -1,3 +1,4 @@
+use crate::material::Material;
 use crate::ray::Ray;
 use macaw::Vec3;
 
@@ -7,6 +8,7 @@ pub struct HitRecord {
     pub normal: Vec3,
     pub t: f32,
     pub front_face: bool,
+    pub material: Material,
 }
 
 impl HitRecord {
@@ -21,5 +23,7 @@ impl HitRecord {
 }
 
 pub trait Hittable {
-    fn hit(&self, ray: &Ray, t_min: f32, t_max: f32, hit_rec: &mut HitRecord) -> bool;
+    fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
+        None
+    }
 }

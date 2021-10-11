@@ -1,20 +1,26 @@
 use crate::hittable::{HitRecord, Hittable};
+use crate::material::{self, Material};
 use crate::ray::Ray;
 use macaw::Vec3;
 
 pub struct Sphere {
     center: Vec3,
     radius: f32,
+    material: Material,
 }
 
 impl Sphere {
-    pub fn new(center: Vec3, radius: f32) -> Self {
-        Self { center, radius }
+    pub fn new(center: Vec3, radius: f32, material: Material) -> Self {
+        Self {
+            center,
+            radius,
+            material,
+        }
     }
 }
 
 impl Hittable for Sphere {
-    fn hit(&self, ray: &Ray, t_min: f32, t_max: f32, hit_rec: &mut HitRecord) -> bool {
+    fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
         // Using formula for sphere intersection
         // (P−C)⋅(P−C)=r2, P(t) = A+tb
         // (P(t)−C)⋅(P(t)−C)=r2
@@ -30,7 +36,7 @@ impl Hittable for Sphere {
 
         let discriminant = half_b * half_b - a * c;
         if discriminant < 0.0 {
-            return false;
+            return None;
         };
 
         let sqrt_discriminant = discriminant.sqrt();
@@ -39,16 +45,26 @@ impl Hittable for Sphere {
         if root < t_min || root > t_max {
             let root = (-half_b + sqrt_discriminant) / a;
             if root < t_min || root > t_max {
-                return false;
+                return None;
             }
         }
 
         // Hidden behavior, needs cleanup
+        /*
         hit_rec.t = root;
         hit_rec.point = ray.at(hit_rec.t);
         let outward_normal = (hit_rec.point - self.center) / self.radius;
         hit_rec.set_face_normal(ray, outward_normal);
+        hit_rec.material = self.material.clone();
+        */
+        let new_hit_record = HitRecord {
+            point: ray.at(root),
+            t: root,
+            normal: (ray.at(root) - self.center) / self.radius,
+            front_face: false,
+            material: self.material.clone(),
+        };
 
-        true
+        Some(new_hit_record)
     }
 }

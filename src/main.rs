@@ -1,6 +1,7 @@
 mod camera;
 mod hittable;
 mod hittable_list;
+mod material;
 mod ray;
 mod sphere;
 mod util;
@@ -9,23 +10,33 @@ use camera::Camera;
 use hittable::{HitRecord, Hittable};
 use hittable_list::HittableList;
 use macaw::Vec3;
+use material::scatter;
 use ray::Ray;
 use sphere::Sphere;
-use util::{random_f32, random_vec_in_unit_sphere, write_pixel_color};
+use util::{random_f32, random_unit_vector, random_vec_in_hemisphere, write_pixel_color};
+
+use crate::material::Material;
 
 fn ray_color(ray: &Ray, world: &HittableList, depth: u8) -> Vec3 {
     let mut hit_rec = HitRecord::default();
+
     if depth <= 0 {
         return Vec3::new(0.0, 0.0, 0.0);
     }
-    if world.hit(ray, 0.001, f32::MAX, &mut hit_rec) {
-        let target = hit_rec.point + hit_rec.normal + random_vec_in_unit_sphere();
-        return 0.5
-            * ray_color(
-                &Ray::new(hit_rec.point, target - hit_rec.point),
-                world,
-                depth - 1,
-            );
+
+    if let Some(hit_rec) = world.hit(ray, 0.001, f32::MAX) {
+        let mut scattered_ray = Ray::default();
+        let mut attenuation = Vec3::default();
+        if scatter(
+            &hit_rec.material,
+            ray,
+            &hit_rec,
+            &mut attenuation,
+            &mut scattered_ray,
+        ) {
+            return attenuation * ray_color(&scattered_ray, world, depth - 1);
+        }
+        return Vec3::new(0.0, 0.0, 0.0);
     }
 
     let unit_direction = ray.direction().normalize();
@@ -41,25 +52,53 @@ fn main() {
     // Image
 
     const ASPECT_RATIO: f32 = 16.0 / 9.0;
-    const IMAGE_WIDTH: i32 = 200;
+    const IMAGE_WIDTH: i32 = 100;
     const IMAGE_HEIGHT: i32 = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as i32;
 
     const MAX_VALUE: u8 = 255;
 
-    const SAMPLES_PER_PIXEL: u32 = 100;
+    const SAMPLES_PER_PIXEL: u32 = 50;
 
-    const MAX_DEPTH: u8 = 50;
+    const MAX_DEPTH: u8 = 20;
 
     // World
-    // small sphere
+    let material_ground = Material::Matte {
+        albedo: Vec3::new(0.8, 0.8, 0.0),
+    };
+    let material_center = Material::Matte {
+        albedo: Vec3::new(0.7, 0.3, 0.3),
+    };
+
+    let material_left = Material::Metal {
+        albedo: Vec3::new(0.8, 0.8, 0.8),
+    };
+    let material_right = Material::Metal {
+        albedo: Vec3::new(0.8, 0.6, 0.2),
+    };
+
     let mut world = HittableList::new();
-    world
-        .list
-        .push(Box::new(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5)));
+    world.list.push(Box::new(Sphere::new(
+        Vec3::new(0.0, 0.0, -1.0),
+        0.5,
+        material_center,
+    )));
     // ground
-    world
-        .list
-        .push(Box::new(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0)));
+    world.list.push(Box::new(Sphere::new(
+        Vec3::new(0.0, -100.5, -1.0),
+        100.0,
+        material_ground,
+    )));
+
+    world.list.push(Box::new(Sphere::new(
+        Vec3::new(-1.0, 0.0, -1.0),
+        0.5,
+        material_left,
+    )));
+    world.list.push(Box::new(Sphere::new(
+        Vec3::new(1.0, 0.0, -1.0),
+        0.5,
+        material_right,
+    )));
 
     // Camera
     let camera = Camera::new();

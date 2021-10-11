@@ -60,3 +60,25 @@ pub fn random_vec_in_unit_sphere() -> Vec3 {
         }
     }
 }
+
+pub fn random_unit_vector() -> Vec3 {
+    random_vec_in_unit_sphere().normalize()
+}
+
+pub fn random_vec_in_hemisphere(normal: &Vec3) -> Vec3 {
+    let vec_in_unitsphere = random_vec_in_unit_sphere();
+    if vec_in_unitsphere.dot(*normal) > 0.0 {
+        return vec_in_unitsphere;
+    } else {
+        return -vec_in_unitsphere;
+    }
+}
+
+pub fn vec_near_zero(vec: Vec3) -> bool {
+    let margin = 1e-8;
+    vec.x < margin && vec.y < margin && vec.z < margin
+}
+
+pub fn vec_reflect(incoming_vec: &Vec3, normal_unitvec: &Vec3) -> Vec3 {
+    *incoming_vec - 2.0 * incoming_vec.dot(*normal_unitvec) * *normal_unitvec
+}
