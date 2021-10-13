@@ -11,6 +11,7 @@ pub enum Material {
     Metal { albedo: Vec3, fuzz: f32 },
     Matte { albedo: Vec3 },
     Glass { refractive_index: f32 },
+    Light { color: Vec3 },
 }
 
 impl Default for Material {
@@ -70,5 +71,13 @@ pub fn scatter(
             *scattered_ray = Ray::new(hit_rec.point, refracted_direction);
             true
         }
+        &Material::Light { color } => false,
+    }
+}
+
+pub fn emitt(material: &Material, u: f32, v: f32, point: Vec3) -> Vec3 {
+    match material {
+        &Material::Light { color } => color,
+        _ => Vec3::new(0.0, 0.0, 0.0),
     }
 }

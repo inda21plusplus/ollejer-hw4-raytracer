@@ -61,6 +61,8 @@ impl Hittable for Sphere {
         let mut new_hit_record = HitRecord {
             point: ray.at(root),
             t: root,
+            u: 0.0,
+            v: 0.0,
             normal: outward_normal,
             front_face: true,
             material: self.material.clone(),

@@ -62,16 +62,6 @@ fn random_scene() -> HittableList {
                         small_ball_radius,
                         sphere_material,
                     )));
-                } else {
-                    // 5 % chance of glass ball AKA black hole
-                    sphere_material = Material::Glass {
-                        refractive_index: 1.5,
-                    };
-                    world.list.push(Box::new(Sphere::new(
-                        center,
-                        small_ball_radius,
-                        sphere_material,
-                    )));
                 }
             }
         }
@@ -89,10 +79,10 @@ fn random_scene() -> HittableList {
 
     let big_material_b = Material::Metal {
         albedo: Vec3::new(0.4, 0.2, 0.1),
-        fuzz: 0.3,
+        fuzz: 0.1,
     };
     world.list.push(Box::new(Sphere::new(
-        Vec3::new(-4.0, 1.0, 0.0),
+        Vec3::new(-2.0, 1.0, 0.5),
         1.0,
         big_material_b,
     )));
@@ -146,7 +136,7 @@ fn main() {
     const IMAGE_HEIGHT: i32 = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as i32;
     const MAX_VALUE: u8 = 255;
 
-    const SAMPLES_PER_PIXEL: u32 = 50;
+    const SAMPLES_PER_PIXEL: u32 = 20;
 
     const MAX_DEPTH: u8 = 50;
 
@@ -227,18 +217,4 @@ fn main() {
             write_pixel_color(pixel_color, SAMPLES_PER_PIXEL);
         }
     }
-
-    let u = (150 as f32 + random_f32()) / (IMAGE_WIDTH) as f32;
-    let v = (50 as f32 + random_f32()) / (IMAGE_HEIGHT) as f32;
-    let ray = camera.get_ray(u, v);
-    let mut pixel_color = Vec3::new(0.0, 0.0, 0.0);
-    pixel_color += ray_color(&ray, &world, MAX_DEPTH);
-    eprintln!("{}", pixel_color);
-
-    let u = (100 as f32 + random_f32()) / (IMAGE_WIDTH) as f32;
-    let v = (50 as f32 + random_f32()) / (IMAGE_HEIGHT) as f32;
-    let ray = camera.get_ray(u, v);
-    let mut pixel_color = Vec3::new(0.0, 0.0, 0.0);
-    pixel_color += ray_color(&ray, &world, MAX_DEPTH);
-    eprintln!("{}", pixel_color);
 }
