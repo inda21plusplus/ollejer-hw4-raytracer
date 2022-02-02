@@ -57,13 +57,18 @@ impl Hittable for Sphere {
         hit_rec.set_face_normal(ray, outward_normal);
         hit_rec.material = self.material.clone();
         */
-        let new_hit_record = HitRecord {
+        let outward_normal = (ray.at(root) - self.center) / self.radius;
+        let mut new_hit_record = HitRecord {
             point: ray.at(root),
             t: root,
-            normal: (ray.at(root) - self.center) / self.radius,
-            front_face: false,
+            u: 0.0,
+            v: 0.0,
+            normal: outward_normal,
+            front_face: true,
             material: self.material.clone(),
         };
+
+        new_hit_record.set_face_normal(ray, outward_normal);
 
         Some(new_hit_record)
     }

@@ -1,6 +1,6 @@
 use macaw::Vec3;
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, Debug)]
 pub struct Ray {
     origin: Vec3,
     direction: Vec3,
