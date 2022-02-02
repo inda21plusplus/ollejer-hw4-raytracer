@@ -17,6 +17,9 @@ use util::{random_f32, random_unit_vector, random_vec_in_hemisphere, write_pixel
 
 use crate::material::Material;
 
+// rayon
+
+
 fn ray_color(ray: &Ray, world: &HittableList, depth: u8) -> Vec3 {
     let mut hit_rec = HitRecord::default();
 
